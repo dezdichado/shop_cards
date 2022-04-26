@@ -20,13 +20,13 @@ from core.config import settings
 router = APIRouter()
 
 
-@router.post("/register")
+@router.post("/register", response_model=ShowUser)
 def create_user(user: UserCreate, db: Session = Depends(get_db)):
     try:
         user = create_new_user(user=user, db=db)
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(e))
-    return {"detail": "Account registered successfully"}
+    return user
 
 
 def authenticate_user(username: str, password: str, db: Session):
