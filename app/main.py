@@ -18,7 +18,6 @@ def create_tables():
 
 
 def start_application():
-    print(os.getenv("POSTGRES_USER"))
     app = FastAPI(title=settings.PROJECT_NAME,
                   version=settings.PROJECT_VERSION)
     include_router(app)
