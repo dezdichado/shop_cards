@@ -13,6 +13,7 @@ SQLAlchemy = "^1.4.35"
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 python-jose = "^3.3.0"
 python-multipart = "^0.0.5"
+cloudinary = "^1.29.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.2"
