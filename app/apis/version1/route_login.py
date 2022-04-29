@@ -78,5 +78,5 @@ def get_current_user_from_token(token: str = Depends(oauth2_scheme), db: Session
 
 @router.put("/change_password", response_model=ShowUser)
 def change_password(new_password: NewPassword, user: User = Depends(get_current_user_from_token), db: Session = Depends(get_db)):
-    user = update_user_password(user, new_password, db)
+    user = update_user_password(user, new_password.new_password, db)
     return user

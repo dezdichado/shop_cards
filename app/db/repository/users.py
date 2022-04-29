@@ -21,6 +21,7 @@ def create_new_user(user: UserCreate, db: Session):
 
 
 def update_user_password(user: User, new_password: str, db: Session):
-    password_hash = Hasher.get_password_hash(new_password.new_password)
+    password_hash = Hasher.get_password_hash(new_password)
     db.execute(update(User).where(User.username == user.username).values(password_hash=password_hash))
+    db.commit()
     return user
