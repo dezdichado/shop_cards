@@ -8,12 +8,13 @@ cloudinary.config(**(secrets["cloudinary"]))
 
 from fastapi import APIRouter
 from sqlalchemy.orm import Session
-from fastapi import Depends, HTTPException, status, UploadFile, File
+from typing import List, Optional
+from fastapi import Depends, HTTPException, status, UploadFile
 
 from db.session import get_db
 from db.models.users import User
 from schemas.cards import CardCreate, ShowCard
-from db.repository.cards import create_new_card
+from db.repository.cards import create_new_card, list_cards
 from apis.version1.route_login import get_current_user_from_token
 
 router = APIRouter()
@@ -32,3 +33,11 @@ def add_card(store_chain_id: int, image: UploadFile, owner: User = Depends(get_c
     image_url = response["secure_url"]
     card = create_new_card(store_chain_id=store_chain_id, image_url=image_url, db=db, owner=owner)
     return card
+
+
+@router.get("/", response_model=List[ShowCard])
+def get_cards(latitude: Optional[float] = None, longitude: Optional[float] = None, owner: User = Depends(get_current_user_from_token), db: Session = Depends(get_db)):
+    if not owner:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail=f"You are not authorized")
+    return list_cards(owner, latitude, longitude, db)

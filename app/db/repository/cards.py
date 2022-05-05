@@ -11,3 +11,7 @@ def create_new_card(store_chain_id: int, image_url: str, db: Session, owner: Use
     db.commit()
     db.refresh(card_object)
     return card_object
+
+
+def list_cards(owner: User, latitude: float, longitude: float, db: Session):
+    return db.query(Card).filter(Card.owner_username == owner.username).all()
