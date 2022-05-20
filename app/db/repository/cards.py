@@ -1,3 +1,4 @@
+from sqlalchemy import delete
 from sqlalchemy.orm import Session
 
 from schemas.cards import CardCreate
@@ -15,3 +16,12 @@ def create_new_card(store_chain_id: int, image_url: str, db: Session, owner: Use
 
 def list_cards(owner: User, latitude: float, longitude: float, db: Session):
     return db.query(Card).filter(Card.owner_username == owner.username).all()
+
+def get_card(id: int, db: Session):
+    card = db.query(Card).filter(Card.id == id).first()
+    return card
+
+
+def delete_card(card: Card, db: Session):
+    db.execute(delete(Card).where(Card.id == card.id))
+    db.commit()

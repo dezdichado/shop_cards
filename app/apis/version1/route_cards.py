@@ -14,7 +14,7 @@ from fastapi import Depends, HTTPException, status, UploadFile
 from db.session import get_db
 from db.models.users import User
 from schemas.cards import CardCreate, ShowCard
-from db.repository.cards import create_new_card, list_cards
+from db.repository.cards import create_new_card, list_cards, delete_card, get_card
 from apis.version1.route_login import get_current_user_from_token
 
 router = APIRouter()
@@ -41,3 +41,13 @@ def get_cards(latitude: Optional[float] = None, longitude: Optional[float] = Non
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail=f"You are not authorized")
     return list_cards(owner, latitude, longitude, db)
+
+
+@router.delete("/{id}")
+def remove_card(id: int, owner: User = Depends(get_current_user_from_token), db: Session = Depends(get_db)):
+    card = get_card(id, db)
+    if card is None or card.owner_username != owner.username:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail=f"This user does not have such card")
+    delete_card(card, db)
+    return {"details": "success"}
