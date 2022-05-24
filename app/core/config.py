@@ -1,19 +1,14 @@
-import os
+import json
 
 
 class Settings:
     PROJECT_NAME: str = "Shop Cards"
     PROJECT_VERSION: str = "1.1.1"
 
-    POSTGRES_USER: str = os.getenv("POSTGRES_USER")
-    POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
-    POSTGRES_SERVER: str = os.getenv("POSTGRES_SERVER", "localhost")
-    POSTGRES_PORT: str = os.getenv("POSTGRES_PORT",
-                                   5432)  # default postgres port is 5432
-    POSTGRES_DB: str = os.getenv("POSTGRES_DB", "tdd")
-
-    SECRET_KEY: str = "qergkq5egn4"
-    ALGORITHM = "HS256"
+    with open("secrets.json") as f:
+        secrets = json.load(f)["config"]
+    SECRET_KEY: str = secrets["SECRET_KEY"]
+    ALGORITHM = secrets["ALGORITHM"]
     ACCESS_TOKEN_EXPIRE_MINUTES = 3 * 30 * 24 * 60  # 3 months
 
 
