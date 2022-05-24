@@ -3,7 +3,7 @@ import os
 
 class Settings:
     PROJECT_NAME: str = "Shop Cards"
-    PROJECT_VERSION: str = "1.1.0"
+    PROJECT_VERSION: str = "1.1.1"
 
     POSTGRES_USER: str = os.getenv("POSTGRES_USER")
     POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
