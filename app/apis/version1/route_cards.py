@@ -27,7 +27,7 @@ def add_card(store_chain_id: int, image: UploadFile, owner: User = Depends(get_c
                             detail=f"You are not authorized")
     print(owner.username)
     try:
-        response = cloudinary.uploader.upload(image.file, transformation=[{"width": 0.93, "height": 0.8, "crop": "crop"},
+        response = cloudinary.uploader.upload(image.file, transformation=[{"width": 0.93, "height": 0.7, "crop": "crop"},
                                                                           {"width": 1500, "height": 2000, "crop": "limit"}])
     except cloudinary.exceptions.Error as err:
         print(err)
