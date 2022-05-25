@@ -31,7 +31,7 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
 
 def authenticate_user(username: str, password: str, db: Session):
     user = get_user(username=username, db=db)
-    print(user)
+    print(user.username)
     if not user:
         return False
     if not Hasher.verify_password(password, user.password_hash):
