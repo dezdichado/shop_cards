@@ -26,7 +26,8 @@ def add_card(store_chain_id: int, image: UploadFile, owner: User = Depends(get_c
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail=f"You are not authorized")
     try:
-        response = cloudinary.uploader.upload(image.file)
+        response = cloudinary.uploader.upload(image.file, transformation=[{"width": 0.93, "height": 0.8, "crop": "crop"},
+                                                                          {"width": 1500, "height": 2000, "crop": "limit"}])
     except cloudinary.exceptions.Error as err:
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                             detail=str(err))

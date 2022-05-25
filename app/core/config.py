@@ -3,7 +3,7 @@ import json
 
 class Settings:
     PROJECT_NAME: str = "Shop Cards"
-    PROJECT_VERSION: str = "1.1.1"
+    PROJECT_VERSION: str = "1.1.2"
 
     with open("secrets.json") as f:
         secrets = json.load(f)["config"]
