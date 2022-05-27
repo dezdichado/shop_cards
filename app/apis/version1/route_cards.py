@@ -14,7 +14,7 @@ from fastapi import Depends, HTTPException, status, UploadFile
 from db.session import get_db
 from db.models.users import User
 from schemas.cards import CardCreate, ShowCard
-from db.repository.cards import create_new_card, list_cards, delete_card, get_card
+from db.repository.cards import create_new_card, list_cards, delete_card, get_card, has_such_card
 from apis.version1.route_login import get_current_user_from_token
 
 router = APIRouter()
@@ -26,6 +26,9 @@ def add_card(store_chain_id: int, image: UploadFile, owner: User = Depends(get_c
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail=f"You are not authorized")
     print(owner.username)
+    if has_such_card(owner.username, store_chain_id, db):
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                            detail="Card for this store chain already exists")
     try:
         response = cloudinary.uploader.upload(image.file, transformation=[{"width": 0.87, "height": 0.7, "crop": "crop"},
                                                                           {"width": 1500, "height": 2000, "crop": "limit"}])
@@ -34,7 +37,11 @@ def add_card(store_chain_id: int, image: UploadFile, owner: User = Depends(get_c
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                             detail=str(err))
     image_url = response["secure_url"]
-    card = create_new_card(store_chain_id=store_chain_id, image_url=image_url, db=db, owner=owner)
+    try:
+        card = create_new_card(store_chain_id=store_chain_id, image_url=image_url, db=db, owner=owner)
+    except ValueError as err:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                            detail=str(err))
     return card
 
 
