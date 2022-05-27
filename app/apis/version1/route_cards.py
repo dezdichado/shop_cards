@@ -14,7 +14,8 @@ from fastapi import Depends, HTTPException, status, UploadFile
 from db.session import get_db
 from db.models.users import User
 from schemas.cards import CardCreate, ShowCard
-from db.repository.cards import create_new_card, list_cards, delete_card, get_card, has_such_card
+from db.repository.cards import create_new_card, list_cards, delete_card,\
+     get_card, has_such_card, is_active_store_chain
 from apis.version1.route_login import get_current_user_from_token
 
 router = APIRouter()
@@ -26,6 +27,9 @@ def add_card(store_chain_id: int, image: UploadFile, owner: User = Depends(get_c
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail=f"You are not authorized")
     print(owner.username)
+    if not is_active_store_chain(store_chain_id, db):
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                            detail="This store chain ID is not supported")
     if has_such_card(owner.username, store_chain_id, db):
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                             detail="Card for this store chain already exists")
@@ -37,11 +41,7 @@ def add_card(store_chain_id: int, image: UploadFile, owner: User = Depends(get_c
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                             detail=str(err))
     image_url = response["secure_url"]
-    try:
-        card = create_new_card(store_chain_id=store_chain_id, image_url=image_url, db=db, owner=owner)
-    except ValueError as err:
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                            detail=str(err))
+    card = create_new_card(store_chain_id=store_chain_id, image_url=image_url, db=db, owner=owner)
     return card
 
 
@@ -57,6 +57,7 @@ def get_cards(latitude: Optional[float] = None, longitude: Optional[float] = Non
 @router.delete("/{id}")
 def remove_card(id: int, owner: User = Depends(get_current_user_from_token), db: Session = Depends(get_db)):
     card = get_card(id, db)
+    # TODO: deleting image from Cloudinary
     if card is None or card.owner_username != owner.username:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail=f"This user does not have such card")

@@ -10,9 +10,6 @@ from db.base import StoreChain
 
 
 def create_new_card(store_chain_id: int, image_url: str, db: Session, owner: User):
-    store_chains = db.query(StoreChain).filter(StoreChain.is_active == True).all()
-    if store_chain_id not in {chain.id for chain in store_chains}:
-        raise ValueError("This store chain ID is not supported")
     card_object = Card(owner_username=owner.username, store_chain_id=store_chain_id, image_url=image_url)
     db.add(card_object)
     db.commit()
@@ -68,3 +65,7 @@ def has_such_card(username: str, store_chain_id: int, db: Session) -> bool:
                                   Card.store_chain_id == store_chain_id).all()
     return bool(cards)
 
+
+def is_active_store_chain(id: int, db: Session):
+    store_chains = db.query(StoreChain).filter(StoreChain.is_active == True).all()
+    return id in {chain.id for chain in store_chains}
