@@ -9,9 +9,10 @@ def get_shop_urls(html):
     return [urljoin("https://toshop.ru/", tag.get("href")) for tag in tags]
 
 
-def get_shop_coordinates(html) -> Tuple[float, float]:
+def get_shop_coordinates(html) -> Tuple[float, float, str]:
     tree = lxml.html.fromstring(html)
     tag = tree.xpath('//*[@id="lblBlockMain"]/div[3]')[0]
     lat = float(tree.xpath('//meta[@itemprop="latitude"]')[0].get("content"))
     long = float(tree.xpath('//meta[@itemprop="longitude"]')[0].get("content"))
-    return lat, long
+    address = tree.xpath('body/form/table/tr[3]/td/span[1]/li[1]')[0].text
+    return lat, long, address

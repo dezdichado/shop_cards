@@ -35,8 +35,8 @@ async def get_chain_shops(chain_id: int, external_id: int):
             shop_id = int(url[url.rfind("=") + 1:])
             shop_resp = await get_response(url, session)
             shop_html = await shop_resp.text()
-            latitude, longitude = parse.get_shop_coordinates(shop_html)
-            shops.append((shop_id, chain_id, latitude, longitude))
+            latitude, longitude, address = parse.get_shop_coordinates(shop_html)
+            shops.append((shop_id, chain_id, latitude, longitude, address))
     return shops
 
 
@@ -48,7 +48,7 @@ async def update_stores(db_filename):
     cursor.execute("DELETE FROM store;")
     for chain_id, external_id in chain_ids:
         shops = await get_chain_shops(chain_id, external_id)
-        cursor.executemany("INSERT INTO store (id, store_chain_id, latitude, longitude) VALUES (?, ?, ?, ?);", shops)
+        cursor.executemany("INSERT INTO store (id, store_chain_id, latitude, longitude, address) VALUES (?, ?, ?, ?, ?);", shops)
     connection.commit()
     connection.close()
 

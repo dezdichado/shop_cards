@@ -13,6 +13,7 @@ class ShowCard(BaseModel):
     store_chain_id: int
     image_url: str
     distance: Optional[int] = None
+    address: Optional[str] = None
 
     class Config:
         orm_mode = True

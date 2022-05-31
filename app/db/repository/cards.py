@@ -21,12 +21,11 @@ def list_cards(owner: User, latitude: float, longitude: float, db: Session):
     cards = db.query(Card).filter(Card.owner_username == owner.username).all()
     if latitude and longitude:
         chains = set(card.store_chain_id for card in cards)
-        print(chains)
         stores = []
         for chain in chains:
             stores.extend(db.query(Store).filter(Store.store_chain_id == chain).all())
-        print([store.store_chain_id for store in stores])
         closest = dict()
+        addrs = dict()
         for store in stores:
             chain_id = store.store_chain_id
             dist = round(distance((store.latitude, store.longitude),
@@ -34,8 +33,10 @@ def list_cards(owner: User, latitude: float, longitude: float, db: Session):
             if chain_id in closest:
                 if dist < closest[chain_id]:
                     closest[chain_id] = dist
+                    addrs[chain_id] = store.address
             else:
                 closest[chain_id] = dist
+                addrs[chain_id] = store.address
         if len(closest):
             default = max(closest.values()) + 1
         else:
@@ -43,9 +44,11 @@ def list_cards(owner: User, latitude: float, longitude: float, db: Session):
         for chain in chains:
             if chain not in closest:
                 closest[chain] = default
+                addrs[chain] = None
 
         for card in cards:
             card.distance = closest[card.store_chain_id]
+            card.address = addrs[card.store_chain_id]
         cards.sort(key=lambda x: x.distance)
     return cards
 
