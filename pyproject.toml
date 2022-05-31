@@ -16,6 +16,11 @@ python-multipart = "^0.0.5"
 cloudinary = "^1.29.0"
 aiohttp = {extras = ["speedups"], version = "^3.8.1"}
 geopy = "^2.2.0"
+lxml = "^4.8.0"
+pyOpenSSL = "^22.0.0"
+ndg-httpsclient = "^0.5.1"
+pyasn1 = "^0.4.8"
+user-agent = "^0.1.10"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.2"
