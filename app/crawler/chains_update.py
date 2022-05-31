@@ -1,7 +1,7 @@
 import asyncio
 import sys
 sys.path.append("/Users/ilya/PycharmProjects/shop_cards/app")
-sys.path.append("~/webapps/shop_cards/app")
+sys.path.append("/home/dezdichado/webapps/shop_cards/app")
 from aiohttp import ClientSession, ClientError, TCPConnector, ClientResponse
 import sqlite3
 from user_agent import generate_user_agent
