@@ -1,6 +1,7 @@
 import os
 import sys
 sys.path.append("/Users/ilya/PycharmProjects/shop_cards/app")
+sys.path.append("~/webapps/shop_cards/app")
 
 from fastapi import FastAPI
 from core.config import settings
